@@ -2,18 +2,36 @@
 #include "highgui.h"
 #include "test.h"
 
-#define SHOW_FRAMES 1
+#define SHOW_FRAMES 0
 /* 
 1942 frames in 65 seconds = about 30 frames per second
 Frame period is then about 1sec / 30 frames = 33 ms/frame
+Fish heart rate is about (2.6) Hz
+Nyquist frequency (max freq we can recontruct is 15 Hz)
 */
-const int MILLIS_PER_FRAME = 33;
-const int F_LOW_CUTOFF = 1;
+
+// These need to be determined experimentally?
+const float LOW_FREQ_CUTOFF = 1.0; 
+const float HIGH_FREQ_CUTOFF = 4.0;
+
+
+const int LOW_THRESH = 100;
+const int HIGH_THRESH = 170;
 
 const char* originalWindow = "originalWindow";
 const char* filteredWindow = "filteredWindow";
 const char* differenceWindow = "differenceWindow";
 const char* fileName = "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/heart_rate.mp4";
+
+// done in place
+void filter(IplImage* img_gray) {
+	for (int i = 0; i < 5; i++) {
+		cvDilate(img_gray, img_gray);
+	}
+	for (int i = 0; i < 3; i++) {
+		cvSmooth( img_gray, img_gray, CV_BLUR );
+	}
+}
 
 int main( int argc, char* argv[] ) {
 	IplImage* framePtr;
@@ -23,13 +41,19 @@ int main( int argc, char* argv[] ) {
 	IplImage* framePtr_gray;
 
 	FILE *filePtr;
+	FILE *filePtr_DFT;
 
 	CvMat* output;
+	CvMat* outputDFT;
+	CvMat* bandFilter;
 
-	int numFrames = 0;
+	int frameCounter = 0;
 
 	filePtr = fopen("output.txt", "w");
 	if ( filePtr == NULL ) return -1;
+
+	filePtr_DFT = fopen("output_DFT.txt", "w");
+	if ( filePtr_DFT == NULL ) return -1;
 
 	CvCapture* capture = 0;
 	capture = cvCreateFileCapture(fileName);
@@ -37,6 +61,20 @@ int main( int argc, char* argv[] ) {
 		printf("Video file could not be opened\n");
 		return -1;
 	}
+
+	const int numFrames = cvGetCaptureProperty(capture, CV_CAP_PROP_FRAME_COUNT);
+	const int vidFPS = cvGetCaptureProperty(capture, CV_CAP_PROP_FPS);
+	const int milliSecondsPerFrame = 1000 / static_cast<float>(vidFPS);
+	const float fundamentalFrequency = static_cast<float>(vidFPS) / static_cast<float>(numFrames);
+	const int lowHarmIndex = static_cast<int>(LOW_FREQ_CUTOFF / fundamentalFrequency);
+	const int highHarmIndex = static_cast<int>(HIGH_FREQ_CUTOFF / fundamentalFrequency);
+
+	printf("numFrames: %d\n", numFrames);
+	printf("vidFPS: %d\n", vidFPS);
+	printf("milliSecondsPerFrame: %d\n", milliSecondsPerFrame);
+	printf("fundamentalFrequency: %f\n", fundamentalFrequency);
+	printf("lowHarmIndex: %d\n", lowHarmIndex);
+	printf("highHarmIndex: %d\n", highHarmIndex);
 
 	previousFramePtr = cvQueryFrame(capture);
 	if( !previousFramePtr ) return -1;
@@ -46,29 +84,18 @@ int main( int argc, char* argv[] ) {
 	diffFramePtr = cvCreateImage(cvGetSize(previousFramePtr), previousFramePtr->depth, 1);
 
 	cvCvtColor( previousFramePtr, previousFramePtr_gray, CV_BGR2GRAY);
+	filter(framePtr_gray);
 
+	output = cvCreateMat( 1, numFrames, CV_32FC1 ); 
+	outputDFT = cvCreateMat( 1, numFrames, CV_32FC1 ); 
 
-	output = cvCreateMat ( 1942, 1, CV_32FC1 ); // numFrames hard coded for now
-	
 	while(1) {
 		framePtr = cvQueryFrame(capture);
 		if( !framePtr ) break;
 		
 		cvCvtColor( framePtr, framePtr_gray, CV_BGR2GRAY);
-		// Smoothing
-		cvSmooth( framePtr_gray, framePtr_gray, CV_BLUR );
-		//cvSobel( framePtr_gray, framePtr_gray, 2, 2, 7);
-
-		/*
-		Difference between frames was too small and rounded down to 0.
-		Implement differential gain.
-		Increase the contrast between the two frames before the subtraction.
-		*/
-		cvAddWeighted(framePtr_gray, 1.0, framePtr_gray, 0.1, 0, framePtr_gray);
-		cvAddWeighted(previousFramePtr, 0.9, previousFramePtr, 0, 0, previousFramePtr);
-
-		cvAbsDiff( framePtr_gray, previousFramePtr_gray, diffFramePtr );
-
+		// Smoothing and Filters
+		filter(framePtr_gray);
 
 		// temporarily hard code the rect params for the ROI
 		const int x = 200;
@@ -77,49 +104,47 @@ int main( int argc, char* argv[] ) {
 		const int height = 128; 
 
 		// draws the rect
-		cvRectangle(diffFramePtr,
+		cvRectangle(framePtr_gray,
 					CvPoint(x, y),
 					CvPoint(x + width, y + height),
 					CvScalar(255,255,255) 
 					);
 
+
 		// ROI for performance
-		cvSetImageROI(diffFramePtr, cvRect(x, y, width, height));
-		
-		// Apply smoothing 
-		cvSmooth( diffFramePtr, diffFramePtr, CV_MEDIAN );
-		cvSmooth( diffFramePtr, diffFramePtr, CV_BLUR );
-		
-		CvScalar avgIntensity = cvAvg(diffFramePtr);
-		fprintf(filePtr, "%.2f\n", avgIntensity.val[0]);
-		cvResetImageROI(diffFramePtr);
+		cvSetImageROI(framePtr_gray, cvRect(x, y, width, height));
+		CvScalar avgIntensity = cvAvg(framePtr_gray);
+		//fprintf(filePtr, "%.2f\n", avgIntensity.val[0]);
+		cvResetImageROI(framePtr_gray);
 
 #if SHOW_FRAMES
-
 		cvShowImage( originalWindow, framePtr );
 		cvShowImage( filteredWindow, framePtr_gray );
-		cvShowImage( differenceWindow, diffFramePtr );
-		char c = cvWaitKey(MILLIS_PER_FRAME);
+
+		char c = cvWaitKey(milliSecondsPerFrame);
 		if( c == 27 ) break;
 #endif
-		previousFramePtr = cvCloneImage(framePtr);
-
-		cvSet1D( output, numFrames, avgIntensity );
-		numFrames++;
+		previousFramePtr = cvCloneImage(framePtr_gray);
+		cvSet1D( output, frameCounter, avgIntensity );
+		frameCounter++;
 	}
 
 	// Signal processing
-
-
+	bandPassFilter(output, output, lowHarmIndex, highHarmIndex);
+				
+	for( int col = 0; col < output->cols; col++ ) {
+		fprintf( filePtr, "%.2f\n", output->data.fl[col] );
+	}
+	printf("Wrote %d points of the bandpass filtered discrete time signal text file\n", output->cols);
+	
 	// Clean up
 	fclose(filePtr);
+	fclose(filePtr_DFT);
 
 	cvReleaseMat( &output );
 	cvReleaseCapture( &capture );
 	cvDestroyWindow( originalWindow );
 	cvDestroyWindow( filteredWindow );
-	cvDestroyWindow( differenceWindow );
+	//cvDestroyWindow( differenceWindow );
 	return 0;
 }
-
-
