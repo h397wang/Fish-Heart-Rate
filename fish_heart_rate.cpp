@@ -2,7 +2,8 @@
 #include "highgui.h"
 #include "test.h"
 
-#define SHOW_FRAMES 0
+#define DISPLAY 0
+
 /* 
 1942 frames in 65 seconds = about 30 frames per second
 Frame period is then about 1sec / 30 frames = 33 ms/frame
@@ -11,12 +12,10 @@ Nyquist frequency (max freq we can recontruct is 15 Hz)
 */
 
 // These need to be determined experimentally?
-const float LOW_FREQ_CUTOFF = 1.0; 
-const float HIGH_FREQ_CUTOFF = 4.0;
+const float LOW_FREQ_CUTOFF = 2.0; 
+const float HIGH_FREQ_CUTOFF = 3.0;
 
-
-const int LOW_THRESH = 100;
-const int HIGH_THRESH = 170;
+const float PEAK_TROUGH_THRESH = 0.25; // should this be dynamic, or determined experimentally.
 
 const char* originalWindow = "originalWindow";
 const char* filteredWindow = "filteredWindow";
@@ -117,7 +116,7 @@ int main( int argc, char* argv[] ) {
 		//fprintf(filePtr, "%.2f\n", avgIntensity.val[0]);
 		cvResetImageROI(framePtr_gray);
 
-#if SHOW_FRAMES
+#if 0
 		cvShowImage( originalWindow, framePtr );
 		cvShowImage( filteredWindow, framePtr_gray );
 
@@ -137,6 +136,54 @@ int main( int argc, char* argv[] ) {
 	}
 	printf("Wrote %d points of the bandpass filtered discrete time signal text file\n", output->cols);
 	
+	// Now count the number of local maxima
+
+	cvReleaseCapture( &capture );
+	capture = cvCreateFileCapture(fileName);
+	if ( capture == NULL ) return -1;
+
+	int heartBeatCount = 0;
+	float trough = output->data.fl[0];
+	for( int frame = 1; frame < output->cols - 1; frame++ ) {
+		framePtr = cvQueryFrame(capture);
+		if( !framePtr ) break;
+		
+		if ( output->data.fl[frame] > output->data.fl[frame - 1] && 
+				output->data.fl[frame] > output->data.fl[frame + 1] ) {
+			if ( output->data.fl[frame] - trough > PEAK_TROUGH_THRESH ) {
+				heartBeatCount++;
+			}
+		} else 
+		if ( output->data.fl[frame] < output->data.fl[frame - 1] && 
+				output->data.fl[frame] < output->data.fl[frame + 1] ) {
+			trough = output->data.fl[frame];
+		}
+
+#if DISPLAY
+		CvFont font;
+		cvInitFont( &font,
+					CV_FONT_HERSHEY_SIMPLEX,
+					1.0,
+					1.0
+					);
+
+		char str[3];
+		sprintf( str, "%d", heartBeatCount );
+		cvPutText( 	framePtr,
+					str,
+					CvPoint( 200, 200 ),
+					&font,
+					CvScalar( 255, 255, 255 )
+					);
+
+		cvShowImage( originalWindow, framePtr );
+		char c = cvWaitKey(milliSecondsPerFrame);
+		if( c == 27 ) break;
+#endif
+	}
+
+	printf("heartBeatCount: %d\n", heartBeatCount);
+
 	// Clean up
 	fclose(filePtr);
 	fclose(filePtr_DFT);
