@@ -6,10 +6,6 @@
 #include "cv.h"
 #include "highgui.h"
 
-void test() {
-    printf("test\n");
-}
-
 // Assumes img is a 3 channel type
 void printData( IplImage* img ) {
 	for( int row = 0; row < img->height; row++ ) {
@@ -48,40 +44,6 @@ void setROI(IplImage* img) {
 	cvSetImageROI(img, cvRect(x, y, width, height));
 }
 
-/*
-kind of redundant
-img may be 3 channels for now, until I figure out how to convert to grayscale
-*/
-double getAverageIntensity(IplImage* img) {
-	double ret = 0;
-	double sum = 0;
-	if (img->nChannels == 3) {
-		for( int row = 0; row < img->height; row++ ) {
-			uchar* ptr = (uchar*) (img->imageData + row * img->widthStep);
-			for( int col = 0; col < img->width; col++ ) {
-				// Just use the average method
-				sum += ptr[3*col];
-				sum += ptr[3*col+1];
-				sum += ptr[3*col+2];
-			}
-		}
-		ret = ( sum / (double) (img->height * img->width * 3) );
-	}
-	return ret;
-}
-
-// Implement a fourier transform here, either 1024 points or 2048?
-
-// Use DFT to accelerate the convolution of array A by kernel B.
-// Place the result in array V.
-//
-void convolution(	
-				const CvMat* mat, // Size: M1xN1
-				const CvMat* filter, // Size: M2xN2, frequency domain
-				CvMat* output // Size:(mat->rows+kernel->rows-1)x(mat->cols+kernel->cols-1)
-				) {
-
-}
 
 // is the optimization really neccesary here?
 // may be done in place I suppose

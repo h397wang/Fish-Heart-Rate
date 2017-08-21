@@ -1,5 +1,7 @@
 
 
+*.mp4
+*.avi
 *.out
 *.o
 *.txt
