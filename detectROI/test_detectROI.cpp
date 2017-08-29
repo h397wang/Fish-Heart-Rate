@@ -12,9 +12,9 @@ const char* originalWindow = "originalWindow";
 const char* filterWindow = "filterWindow";
 const char* cannyWindow = "cannyWindow";
 const char* straightLinesWindow = "straightLinesWindow";
+const char* differenceWindow = "differenceWindow";
 
-
-const char* fileName = "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/heartRateVids/heart_rate_4116.mp4";
+const char* fileName = "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/heartRateVids/heart_rate.mp4";
 const char* linesImg = "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/detectROI/straightlines.jpg";
 
 // new idea
@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
 	// expand the whites
 	cvDilate( cannyFramePtr, cannyFramePtr, NULL, 1 );
 
-	// detectLines(cannyFramePtr, framePtr );
+	detectLines(cannyFramePtr, framePtr );
 
 	cvNamedWindow( originalWindow, 1 );
 	cvNamedWindow( filterWindow, 1 );

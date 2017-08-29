@@ -49,57 +49,54 @@ void setROI(IplImage* img) {
 // may be done in place I suppose
 // apparently i cant use column vectors?
 void bandPassFilter(
-					const CvMat* signal_timeDom, // row vector 
-					CvMat* output, 
-					int lowHarmIndexCutoff,
-					int highHarmIndexCutoff
-					) {
+		const CvMat* signal_timeDom, 
+		CvMat* output, 
+		int lowHarmIndexCutoff,
+		int highHarmIndexCutoff ) {
 
-	assert( signal_timeDom->rows == 1 );
-	assert( output->rows == 1 );
+	assert( signal_timeDom->rows == output->rows );
+	//assert( output->rows == 1 );
 	assert( output->cols == signal_timeDom->cols );
 
-	int opDFTSize = cvGetOptimalDFTSize( signal_timeDom->cols );
-
-	CvMat* signal_timeDom_padded = cvCreateMat( 1, opDFTSize, signal_timeDom->type );
+	const int opDFTSize = cvGetOptimalDFTSize( signal_timeDom->cols );
+	CvMat* signal_timeDom_padded = cvCreateMat( signal_timeDom->rows, opDFTSize, signal_timeDom->type );
 	CvMat subMat;
 	cvGetSubRect(
-				signal_timeDom_padded,
-				&subMat,
-				cvRect(
-					0,
-					0,
-					signal_timeDom->cols, // width
-					signal_timeDom->rows // height
-					)
-				);
+		signal_timeDom_padded,
+		&subMat,
+		cvRect(
+			0,
+			0,
+			signal_timeDom->cols,
+			signal_timeDom->rows ) );
 	cvCopy( signal_timeDom, &subMat );
 
 	cvGetSubRect(
-				signal_timeDom_padded,
-				&subMat,
-				cvRect(
-					signal_timeDom->cols, // x is horizontal coordinate component
-					0, // y is vertical coordinate component
-					signal_timeDom_padded->cols - signal_timeDom->cols,
-					signal_timeDom->rows) // should be 1
-				);
+		signal_timeDom_padded,
+		&subMat,
+		cvRect(
+			signal_timeDom->cols, 
+			0, 
+			signal_timeDom_padded->cols - signal_timeDom->cols,
+			signal_timeDom->rows ) );
 	cvZero( &subMat );
 
-
-	CvMat* signal_freqDom_padded = cvCreateMat( 1, opDFTSize, CV_32FC1 ); 
+	CvMat* signal_freqDom_padded = cvCreateMat( signal_timeDom->rows, opDFTSize, CV_32FC1 ); 
 
 	cvDFT( signal_timeDom_padded, signal_freqDom_padded, CV_DXT_FORWARD);
 
 	// Iterate the proper way incase the vector is not contiguous
 	// See page 178 for the encoding of the DFT output
-	float* ptr = (float*)(signal_freqDom_padded->data.fl);
-	for(int col = 0; col < signal_freqDom_padded->cols; col++ ) {
-		const int harmonicIndex = (col + 1) / 2; // intrinsic floor division 
-		if ( harmonicIndex < lowHarmIndexCutoff || harmonicIndex > highHarmIndexCutoff ) {
-			*ptr = 0.0f;
+	// TODO: This method isn't very efficient.
+	for (int row = 0; row < signal_freqDom_padded->rows; row++ ) { 
+		float* ptr = (float*)(signal_freqDom_padded->data.ptr + row * signal_freqDom_padded->step);
+		for(int col = 0; col < signal_freqDom_padded->cols; col++ ) {
+			const int harmonicIndex = (col + 1) / 2; // intrinsic floor division 
+			if ( harmonicIndex < lowHarmIndexCutoff || harmonicIndex > highHarmIndexCutoff ) {
+				*ptr = 0.0f;
+			}
+			ptr++;
 		}
-		ptr++;
 	}
 
 	cvDFT( signal_freqDom_padded, signal_timeDom_padded, CV_DXT_INV_SCALE);
@@ -111,4 +108,19 @@ void bandPassFilter(
 }
 
 
-
+void calcPower( const CvMat* signal_timeDom, CvMat* output ) { // 2d array
+	//CvMat* signalPowers = cvCreateMat( signal_timeDom->rows, 1, CV_32FC1 ); 
+	// assertions
+	assert( signal_timeDom->rows == output->rows );
+	for (int row = 0; row < signal_timeDom->rows; row++ ) { 
+		float* ptr = (float*)(signal_timeDom->data.ptr + row * signal_timeDom->step);
+		float power = 0;
+		for(int col = 0; col < signal_timeDom->cols; col++ ) {
+			power += (*ptr) * (*ptr);
+			ptr++;
+		}
+		float* outputPtr = (float*)(output->data.ptr + row * output->step);
+		*outputPtr = power;
+		//cvSet2D( output, row, 1, CvScalar( power / signal_timeDom->cols ) );
+	}
+}
