@@ -2,7 +2,7 @@
 #include "highgui.h"
 #include "test.h"
 
-#define DEMO 0
+#define DEMO 1
 #define DEBUG 1
 /* 
 Frame period is about 1 sec / 30 frames = 33 ms/frame
@@ -11,8 +11,8 @@ Nyquist frequency (max freq we can recontruct is 15 Hz)
 */
 
 // These are determined experimentally.
-const float LOW_FREQ_CUTOFF = 2.0; 
-const float HIGH_FREQ_CUTOFF = 3.0;
+const float LOW_FREQ_CUTOFF = 2.2; 
+const float HIGH_FREQ_CUTOFF = 2.8;
 
 // TODO: Should be your determine dynamically.
 const float PEAK_TROUGH_THRESH = 0.25; 
@@ -24,7 +24,7 @@ const char* fileName = "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/
 
 const int WIDTH_NUM_ROI = 4;
 const int HEIGHT_NUM_ROI = 4;
-const int SUB_SAMPLE_FRAMES = 128;
+const int SUB_SAMPLE_FRAMES = 256;
 
 /*
 Input: Grayscale image
@@ -82,6 +82,7 @@ int main( int argc, char* argv[] ) {
 	filter( previousFramePtr_gray );
 
 	// TODO: this part needs to be extracted into a function.
+	// The ROI might also change, if the fish drifts around...
 	CvMat* ROIIntensities = cvCreateMat(HEIGHT_NUM_ROI * WIDTH_NUM_ROI, numFrames, CV_32FC1 ); 
 	for ( int frameCounter = 1; frameCounter < SUB_SAMPLE_FRAMES; frameCounter++ ) { 
 		framePtr = cvQueryFrame( capture );
@@ -138,7 +139,10 @@ int main( int argc, char* argv[] ) {
 	const int xRoi = roiWidth * ( maxPowerRoiIndex % WIDTH_NUM_ROI );
 	const int yRoi = roiHeight * ( maxPowerRoiIndex / HEIGHT_NUM_ROI );
 
-	// to 0
+	cvReleaseCapture( &capture );
+	capture = cvCreateFileCapture( fileName );
+	if ( capture == NULL ) return -1;
+
 	for (int frameCounter = 1; frameCounter < numFrames; frameCounter++ ) {
 		framePtr = cvQueryFrame( capture );
 		if( !framePtr ) break;
@@ -166,11 +170,11 @@ int main( int argc, char* argv[] ) {
 			CvPoint( x + width, y + height ),
 			CvScalar( 255, 255, 255 ) );
 #endif
-		// Filter to reduce the noise in average intensity fluctuations.
-		filter( framePtr_gray );
 
 		// Ideally, other CV tasks should be enclosed in this scope for performance.
 		cvSetImageROI( framePtr_gray, cvRect( xRoi, yRoi, roiWidth, roiHeight ) );
+		// Filter to reduce the noise in average intensity fluctuations.
+		filter( framePtr_gray );
 		CvScalar avgIntensity = cvAvg(framePtr_gray);
 		cvResetImageROI(framePtr_gray);
 		cvSet1D( output, frameCounter, avgIntensity );
