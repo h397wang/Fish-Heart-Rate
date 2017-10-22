@@ -22,8 +22,8 @@ const char* filteredWindow = "filteredWindow";
 const char* differenceWindow = "differenceWindow";
 
 const char* fileName = "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/heartRateVids/heart_rate.mp4";
-const char* rawOutputFileName = "/Output/raw_output.txt";
-const char* filteredOutputFileName = "/Output/filtered_output.txt";
+const char* rawOutputFileName = "Output/raw_output.txt";
+const char* filteredOutputFileName = "Output/filtered_output.txt";
 const char* demoVidName = "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/DemoVids/heart_rate_demo.mp4";
 
 const int WIDTH_NUM_ROI = 4;
@@ -55,10 +55,16 @@ int main( int argc, char* argv[] ) {
 
 	// Text file for time signal output
 	FILE* rawOutputFilePtr = fopen( rawOutputFileName, "w" );
-	if ( rawOutputFilePtr == NULL ) return -1;
+	if ( rawOutputFilePtr == NULL ) {
+		printf( "%s could not be opened\n", rawOutputFileName );
+		return -1;
+	}
 
 	FILE* filteredOutputFilePtr = fopen( filteredOutputFileName, "w" );
-	if ( filteredOutputFilePtr == NULL ) return -1;
+	if ( filteredOutputFilePtr == NULL ) {
+		printf( "%s could not be opened\n", rawOutputFileName );
+		return -1;
+	}
 
 	CvCapture* capture = cvCreateFileCapture( fileName );
 	if( capture == NULL ){
