@@ -12,11 +12,11 @@ Tedious chore for researchers.
 ### Region of Interest (ROI) Identification
 This can be done programmatically, by letting the user make the selection, or by simply hardcoding the rectangle coordinates into the program. Here's a sample video illustrating the kind of movement we're looking for.
 
-<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_trimmed.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_trimmed.gif" align="center" ></a><a 
+<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_trimmed.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_trimmed.gif" align="center" ></a> 
 
 After applying several filters, it would appear that we are looking for a bright pulse that occurs at some frequency.
 
-<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_filtered.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_filtered.gif" align="center" ></a><a 
+<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_filtered.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_filtered.gif" align="center" ></a> 
 
 A hacky way to do it is to treat the video display as a recangular grid. For each rectangular ROI, evaluate the average intensities over time. Apply a bandpass filter to each discrete time signal. Now find the ROI that has the highest signal power. This should work because since the other potential ROI should have relatively low signal power, after the filtering, because those areas should be fairly static. 
 
@@ -33,13 +33,13 @@ Bandpass filtering is the essential algorithm used here.
 
 This signal processing looks like this.
 
-href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/raw_signal.png"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/raw_signal.png" align="top" width="300" ></a>  
+<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/raw_signal.png"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/raw_signal.png" align="top" width="300" ></a>
 
-href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/filtered_signal.png"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/filtered_signal.png" align="top" width="300" ></a>  
+<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/filtered_signal.png"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/filtered_signal.png" align="top" width="300" ></a>  
 
 From visual inspection, it becomes very obvious where the heart beats appear.
 
 ### Demonstration
 Here's an overly lengthy gif of the end product.
 
-<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_demo_trimmed.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_demo_trimmed.gif" align="center" ></a><a 
+<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_demo_trimmed.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_demo_trimmed.gif" align="center" ></a>
