@@ -33,9 +33,9 @@ Bandpass filtering is the essential algorithm used here.
 
 This signal processing looks like this.
 
-href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/raw_signal.png"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/raw_signal.png" align="left" width="200" ></a>  
+href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/raw_signal.png"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/raw_signal.png" align="top" width="300" ></a>  
 
-href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/filtered_signal.png"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/filtered_signal.png" align="left" width="200" ></a>  
+href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/filtered_signal.png"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/filtered_signal.png" align="top" width="300" ></a>  
 
 From visual inspection, it becomes very obvious where the heart beats appear.
 
