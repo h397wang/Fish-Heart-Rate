@@ -42,4 +42,4 @@ From visual inspection, it becomes very obvious where the heart beats appear.
 ### Demonstration
 Here's an overly lengthy gif of the end product.
 
-<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_demo_trimmed.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_demo_trimmed.gif" align="center" ></a>
+<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_demo_10sec.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_demo_10sec.gif" align="center" ></a>
