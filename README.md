@@ -12,7 +12,7 @@ Tedious chore for researchers.
 ### Region of Interest (ROI) Identification
 This can be done programmatically, by letting the user make the selection, or by simply hardcoding the rectangle coordinates into the program. Here's a sample video illustrating the kind of movement we're looking for.
 
-<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate.gif" align="center" ></a><a 
+<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_trimmed.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_trimmed.gif" align="center" ></a><a 
 
 After applying several filters, it would appear that we are looking for a bright pulse that occurs at some frequency.
 
@@ -42,4 +42,4 @@ From visual inspection, it becomes very obvious where the heart beats appear.
 ### Demonstration
 Here's an overly lengthy gif of the end product.
 
-<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_trimmed.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_trimmed.gif" align="center" ></a><a 
+<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_demo_trimmed.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_demo_trimmed.gif" align="center" ></a><a 
