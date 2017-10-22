@@ -1,37 +1,45 @@
-## Welcome to GitHub Pages
+### Automate Detection of Fish Heart Rate
 
-You can use the [editor on GitHub](https://github.com/h397wang/Fish-Heart-Rate/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+### Preface
+Tedious chore for researchers. 
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Assumptions
+- Fish larvae is static throughout the video, such that the region of interest doesn't change. The fish should be sedated so we don't expect movement elsewhere. This is beneficial as it reduced noise in our calulations.
+- We know the upper and lower limits of the fish heart rate, this is required for bandpass filtering.
 
-### Markdown
+### General Algorithm
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+### Region of Interest (ROI) Identification
+This can be done programmatically, by letting the user make the selection, or by simply hardcoding the rectangle coordinates into the program. Here's a sample video illustrating the kind of movement we're looking for.
 
-```markdown
-Syntax highlighted code block
+<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate.gif" align="center" ></a><a 
 
-# Header 1
-## Header 2
-### Header 3
+After applying several filters, it would appear that we are looking for a bright pulse that occurs at some frequency.
 
-- Bulleted
-- List
+<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_filtered.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_filtered.gif" align="center" ></a><a 
 
-1. Numbered
-2. List
+A hacky way to do it is to treat the video display as a recangular grid. For each rectangular ROI, evaluate the average intensities over time. Apply a bandpass filter to each discrete time signal. Now find the ROI that has the highest signal power. This should work because since the other potential ROI should have relatively low signal power, after the filtering, because those areas should be fairly static. 
 
-**Bold** and _Italic_ and `Code` text
+### Filtering Process
+The same filtering process is used in the ROI identification, as well as the counting of heart beats. 
 
-[Link](url) and ![Image](src)
-```
+Dilation and smoothing serves to enhance the bright spots that represent the fish heart beat. This helps to reduce the SNR because doing raw frame subtractions yields a very small relative difference.
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+Bandpass filtering is the essential algorithm used here.
+1. The average intensity of the ROI is calculated for each frame. This gives a discrete time signal.
+2. Applying the Fourier Transform allows filtering to be easily done in the frequency domain.
+3. Frequencies outside of the upper and lower frequency limits are zeroed.
+4. Apply the Inverse Fourier transform to obtained the filtered discrete time signal.
 
-### Jekyll Themes
+This signal processing looks like this.
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/h397wang/Fish-Heart-Rate/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/raw_signal.png"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/raw_signal.png" align="left" width="200" ></a>  
 
-### Support or Contact
+href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/filtered_signal.png"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/Output/filtered_signal.png" align="left" width="200" ></a>  
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+From visual inspection, it becomes very obvious where the heart beats appear.
+
+### Demonstration
+Here's an overly lengthy gif of the end product.
+
+<a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_trimmed.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_trimmed.gif" align="center" ></a><a 
