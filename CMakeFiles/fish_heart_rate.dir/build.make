@@ -81,40 +81,40 @@ CMakeFiles/fish_heart_rate.dir/fish_heart_rate.cpp.o.provides: CMakeFiles/fish_h
 CMakeFiles/fish_heart_rate.dir/fish_heart_rate.cpp.o.provides.build: CMakeFiles/fish_heart_rate.dir/fish_heart_rate.cpp.o
 
 
-CMakeFiles/fish_heart_rate.dir/test.cpp.o: CMakeFiles/fish_heart_rate.dir/flags.make
-CMakeFiles/fish_heart_rate.dir/test.cpp.o: test.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/fish_heart_rate.dir/test.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/fish_heart_rate.dir/test.cpp.o -c /Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/test.cpp
+CMakeFiles/fish_heart_rate.dir/helper.cpp.o: CMakeFiles/fish_heart_rate.dir/flags.make
+CMakeFiles/fish_heart_rate.dir/helper.cpp.o: helper.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/fish_heart_rate.dir/helper.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/fish_heart_rate.dir/helper.cpp.o -c /Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/helper.cpp
 
-CMakeFiles/fish_heart_rate.dir/test.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/fish_heart_rate.dir/test.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/test.cpp > CMakeFiles/fish_heart_rate.dir/test.cpp.i
+CMakeFiles/fish_heart_rate.dir/helper.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/fish_heart_rate.dir/helper.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/helper.cpp > CMakeFiles/fish_heart_rate.dir/helper.cpp.i
 
-CMakeFiles/fish_heart_rate.dir/test.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/fish_heart_rate.dir/test.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/test.cpp -o CMakeFiles/fish_heart_rate.dir/test.cpp.s
+CMakeFiles/fish_heart_rate.dir/helper.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/fish_heart_rate.dir/helper.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/helper.cpp -o CMakeFiles/fish_heart_rate.dir/helper.cpp.s
 
-CMakeFiles/fish_heart_rate.dir/test.cpp.o.requires:
+CMakeFiles/fish_heart_rate.dir/helper.cpp.o.requires:
 
-.PHONY : CMakeFiles/fish_heart_rate.dir/test.cpp.o.requires
+.PHONY : CMakeFiles/fish_heart_rate.dir/helper.cpp.o.requires
 
-CMakeFiles/fish_heart_rate.dir/test.cpp.o.provides: CMakeFiles/fish_heart_rate.dir/test.cpp.o.requires
-	$(MAKE) -f CMakeFiles/fish_heart_rate.dir/build.make CMakeFiles/fish_heart_rate.dir/test.cpp.o.provides.build
-.PHONY : CMakeFiles/fish_heart_rate.dir/test.cpp.o.provides
+CMakeFiles/fish_heart_rate.dir/helper.cpp.o.provides: CMakeFiles/fish_heart_rate.dir/helper.cpp.o.requires
+	$(MAKE) -f CMakeFiles/fish_heart_rate.dir/build.make CMakeFiles/fish_heart_rate.dir/helper.cpp.o.provides.build
+.PHONY : CMakeFiles/fish_heart_rate.dir/helper.cpp.o.provides
 
-CMakeFiles/fish_heart_rate.dir/test.cpp.o.provides.build: CMakeFiles/fish_heart_rate.dir/test.cpp.o
+CMakeFiles/fish_heart_rate.dir/helper.cpp.o.provides.build: CMakeFiles/fish_heart_rate.dir/helper.cpp.o
 
 
 # Object files for target fish_heart_rate
 fish_heart_rate_OBJECTS = \
 "CMakeFiles/fish_heart_rate.dir/fish_heart_rate.cpp.o" \
-"CMakeFiles/fish_heart_rate.dir/test.cpp.o"
+"CMakeFiles/fish_heart_rate.dir/helper.cpp.o"
 
 # External object files for target fish_heart_rate
 fish_heart_rate_EXTERNAL_OBJECTS =
 
 fish_heart_rate: CMakeFiles/fish_heart_rate.dir/fish_heart_rate.cpp.o
-fish_heart_rate: CMakeFiles/fish_heart_rate.dir/test.cpp.o
+fish_heart_rate: CMakeFiles/fish_heart_rate.dir/helper.cpp.o
 fish_heart_rate: CMakeFiles/fish_heart_rate.dir/build.make
 fish_heart_rate: /usr/local/lib/libopencv_calib3d.a
 fish_heart_rate: /usr/local/lib/libopencv_core.a
@@ -162,7 +162,7 @@ CMakeFiles/fish_heart_rate.dir/build: fish_heart_rate
 .PHONY : CMakeFiles/fish_heart_rate.dir/build
 
 CMakeFiles/fish_heart_rate.dir/requires: CMakeFiles/fish_heart_rate.dir/fish_heart_rate.cpp.o.requires
-CMakeFiles/fish_heart_rate.dir/requires: CMakeFiles/fish_heart_rate.dir/test.cpp.o.requires
+CMakeFiles/fish_heart_rate.dir/requires: CMakeFiles/fish_heart_rate.dir/helper.cpp.o.requires
 
 .PHONY : CMakeFiles/fish_heart_rate.dir/requires
 

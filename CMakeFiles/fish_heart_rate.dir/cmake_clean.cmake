@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/fish_heart_rate.dir/fish_heart_rate.cpp.o"
-  "CMakeFiles/fish_heart_rate.dir/test.cpp.o"
+  "CMakeFiles/fish_heart_rate.dir/helper.cpp.o"
   "fish_heart_rate.pdb"
   "fish_heart_rate"
 )

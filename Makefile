@@ -150,32 +150,32 @@ fish_heart_rate.cpp.s:
 	$(MAKE) -f CMakeFiles/fish_heart_rate.dir/build.make CMakeFiles/fish_heart_rate.dir/fish_heart_rate.cpp.s
 .PHONY : fish_heart_rate.cpp.s
 
-test.o: test.cpp.o
+helper.o: helper.cpp.o
 
-.PHONY : test.o
+.PHONY : helper.o
 
 # target to build an object file
-test.cpp.o:
-	$(MAKE) -f CMakeFiles/fish_heart_rate.dir/build.make CMakeFiles/fish_heart_rate.dir/test.cpp.o
-.PHONY : test.cpp.o
+helper.cpp.o:
+	$(MAKE) -f CMakeFiles/fish_heart_rate.dir/build.make CMakeFiles/fish_heart_rate.dir/helper.cpp.o
+.PHONY : helper.cpp.o
 
-test.i: test.cpp.i
+helper.i: helper.cpp.i
 
-.PHONY : test.i
+.PHONY : helper.i
 
 # target to preprocess a source file
-test.cpp.i:
-	$(MAKE) -f CMakeFiles/fish_heart_rate.dir/build.make CMakeFiles/fish_heart_rate.dir/test.cpp.i
-.PHONY : test.cpp.i
+helper.cpp.i:
+	$(MAKE) -f CMakeFiles/fish_heart_rate.dir/build.make CMakeFiles/fish_heart_rate.dir/helper.cpp.i
+.PHONY : helper.cpp.i
 
-test.s: test.cpp.s
+helper.s: helper.cpp.s
 
-.PHONY : test.s
+.PHONY : helper.s
 
 # target to generate assembly for a file
-test.cpp.s:
-	$(MAKE) -f CMakeFiles/fish_heart_rate.dir/build.make CMakeFiles/fish_heart_rate.dir/test.cpp.s
-.PHONY : test.cpp.s
+helper.cpp.s:
+	$(MAKE) -f CMakeFiles/fish_heart_rate.dir/build.make CMakeFiles/fish_heart_rate.dir/helper.cpp.s
+.PHONY : helper.cpp.s
 
 # Help Target
 help:
@@ -189,9 +189,9 @@ help:
 	@echo "... fish_heart_rate.o"
 	@echo "... fish_heart_rate.i"
 	@echo "... fish_heart_rate.s"
-	@echo "... test.o"
-	@echo "... test.i"
-	@echo "... test.s"
+	@echo "... helper.o"
+	@echo "... helper.i"
+	@echo "... helper.s"
 .PHONY : help
 
 

@@ -5,7 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/fish_heart_rate.cpp" "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/CMakeFiles/fish_heart_rate.dir/fish_heart_rate.cpp.o"
-  "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/test.cpp" "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/CMakeFiles/fish_heart_rate.dir/test.cpp.o"
+  "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/helper.cpp" "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/CMakeFiles/fish_heart_rate.dir/helper.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "Clang")
 

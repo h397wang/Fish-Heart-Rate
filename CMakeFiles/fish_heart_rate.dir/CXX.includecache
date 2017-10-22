@@ -11,22 +11,26 @@ cv.h
 /Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/cv.h
 highgui.h
 /Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/highgui.h
-test.h
-/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/test.h
+helper.h
+/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/helper.h
+stdio.h
+-
+stdlib.h
+-
 
-/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/test.cpp
+/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/helper.cpp
 stdio.h
 -
 assert.h
 -
-test.h
-/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/test.h
+helper.h
+/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/helper.h
 cv.h
 /Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/cv.h
 highgui.h
 /Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/highgui.h
 
-/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/test.h
+/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/helper.h
 cv.h
 /Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/cv.h
 highgui.h

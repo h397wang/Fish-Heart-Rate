@@ -1,9 +1,9 @@
 #include "cv.h"
 #include "highgui.h"
-#include "test.h"
+#include "helper.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-#define DEMO 1
-#define DEBUG 1
 /* 
 Frame period is about 1 sec / 30 frames = 33 ms/frame
 Fish heart rate is about (2.6) Hz
@@ -20,29 +20,45 @@ const float PEAK_TROUGH_THRESH = 0.25;
 const char* originalWindow = "originalWindow";
 const char* filteredWindow = "filteredWindow";
 const char* differenceWindow = "differenceWindow";
+
 const char* fileName = "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/heartRateVids/heart_rate.mp4";
+const char* rawOutputFileName = "/Output/raw_output.txt";
+const char* filteredOutputFileName = "/Output/filtered_output.txt";
+const char* demoVidName = "/Users/henrywang/Documents/SideProjects/OpenCVTutorials/Fish/DemoVids/heart_rate_demo.mp4";
 
 const int WIDTH_NUM_ROI = 4;
 const int HEIGHT_NUM_ROI = 4;
 const int SUB_SAMPLE_FRAMES = 256;
 
 /*
-Input: Grayscale image
+IplImage* Grayscale image
 */
-void filter( IplImage* img_gray ) {
+void filter( IplImage* imgGray ) {
 	for ( int i = 0; i < 5; i++ ) {
 		// Dilation reduces black spots and enlarges bright spots.
-		cvDilate( img_gray, img_gray );
+		cvDilate( imgGray, imgGray );
 	}
 	for (int i = 0; i < 3; i++) {
-		cvSmooth( img_gray, img_gray, CV_BLUR );
+		cvSmooth( imgGray, imgGray, CV_BLUR );
 	}
 }
 
 int main( int argc, char* argv[] ) {
 
-	FILE* filePtr = fopen( "output.txt", "w" );
-	if ( filePtr == NULL ) return -1;
+	if (argc != 3) {
+		printf("Expected: ./filename <debug> <demo>\n");
+		return -1;
+	}
+
+	const int debug = atoi(argv[1]);
+	const int demo = atoi(argv[2]);
+
+	// Text file for time signal output
+	FILE* rawOutputFilePtr = fopen( rawOutputFileName, "w" );
+	if ( rawOutputFilePtr == NULL ) return -1;
+
+	FILE* filteredOutputFilePtr = fopen( filteredOutputFileName, "w" );
+	if ( filteredOutputFilePtr == NULL ) return -1;
 
 	CvCapture* capture = cvCreateFileCapture( fileName );
 	if( capture == NULL ){
@@ -52,73 +68,74 @@ int main( int argc, char* argv[] ) {
 
 	// Extract video information.
 	const int numFrames = cvGetCaptureProperty( capture, CV_CAP_PROP_FRAME_COUNT );
-	const int vidFPS = cvGetCaptureProperty( capture, CV_CAP_PROP_FPS );
-	const int milliSecondsPerFrame = 1000 / static_cast<float>( vidFPS );
-	const float fundamentalFrequency = static_cast<float>( vidFPS ) / static_cast<float>( numFrames);
+	const int vidFps = cvGetCaptureProperty( capture, CV_CAP_PROP_FPS );
+	const int milliSecondsPerFrame = 1000 / static_cast<float>( vidFps );
+	const float fundamentalFrequency = static_cast<float>( vidFps ) / static_cast<float>( numFrames);
 	const int lowHarmIndex = static_cast<int>( LOW_FREQ_CUTOFF / fundamentalFrequency );
 	const int highHarmIndex = static_cast<int>( HIGH_FREQ_CUTOFF / fundamentalFrequency );
 	const int frameHeight = cvGetCaptureProperty( capture, CV_CAP_PROP_FRAME_HEIGHT);
 	const int frameWidth = cvGetCaptureProperty( capture, CV_CAP_PROP_FRAME_WIDTH);
-	
 	const int roiWidth = frameWidth / WIDTH_NUM_ROI;
 	const int roiHeight = frameHeight / HEIGHT_NUM_ROI;
 
 	// Print video information
-	printf( "numFrames: %d\n", numFrames );
-	printf( "vidFPS: %d\n", vidFPS );
-	printf( "milliSecondsPerFrame: %d\n", milliSecondsPerFrame );
-	printf( "fundamentalFrequency: %f\n", fundamentalFrequency );
-	printf( "lowHarmIndex: %d\n", lowHarmIndex );
-	printf( "highHarmIndex: %d\n", highHarmIndex );
+	if ( debug ) {
+		printf( "numFrames: %d\n", numFrames );
+		printf( "vidFps: %d\n", vidFps );
+		printf( "milliSecondsPerFrame: %d\n", milliSecondsPerFrame );
+		printf( "fundamentalFrequency: %f\n", fundamentalFrequency );
+		printf( "lowHarmIndex: %d\n", lowHarmIndex );
+		printf( "highHarmIndex: %d\n", highHarmIndex );
+	}
+
+	CvVideoWriter *writer = cvCreateVideoWriter(
+		demoVidName,
+		CV_FOURCC('M','J','P','G'),
+		vidFps,
+		cvSize(frameWidth, frameHeight)
+		);
 
 	// Initializations
 	IplImage* framePtr 					= cvQueryFrame( capture );
 	CvMat* output 						= cvCreateMat( 1, numFrames, CV_32FC1 ); 
-	IplImage* framePtr_gray 			= cvCreateImage( cvGetSize( framePtr ), framePtr->depth, 1 );
-	IplImage* previousFramePtr_gray 	= cvCreateImage( cvGetSize( framePtr ), framePtr->depth, 1 );
+	IplImage* grayFramePtr 				= cvCreateImage( cvGetSize( framePtr ), framePtr->depth, 1 );
+	IplImage* previousGrayFramePtr 		= cvCreateImage( cvGetSize( framePtr ), framePtr->depth, 1 );
 	IplImage* diffFramePtr				= cvCreateImage( cvGetSize( framePtr ), framePtr->depth, 1 );
+	cvCvtColor( framePtr, previousGrayFramePtr, CV_BGR2GRAY);
+	filter( previousGrayFramePtr );
 
-	cvCvtColor( framePtr, previousFramePtr_gray, CV_BGR2GRAY);
-	filter( previousFramePtr_gray );
-
-	// TODO: this part needs to be extracted into a function.
-	// The ROI might also change, if the fish drifts around...
-	CvMat* ROIIntensities = cvCreateMat(HEIGHT_NUM_ROI * WIDTH_NUM_ROI, numFrames, CV_32FC1 ); 
+	// Track the intensities of each ROI over time
+	CvMat* roiIntensities = cvCreateMat(HEIGHT_NUM_ROI * WIDTH_NUM_ROI, numFrames, CV_32FC1 ); 
+	
+	// First iteration to locate ROI
 	for ( int frameCounter = 1; frameCounter < SUB_SAMPLE_FRAMES; frameCounter++ ) { 
 		framePtr = cvQueryFrame( capture );
 		if( !framePtr ) break;
-		cvCvtColor( framePtr, framePtr_gray, CV_BGR2GRAY);
-		filter( framePtr_gray );
+		cvCvtColor( framePtr, grayFramePtr, CV_BGR2GRAY);
+		filter( grayFramePtr );
+		cvAbsDiff( grayFramePtr, previousGrayFramePtr, diffFramePtr );
+		previousGrayFramePtr = cvCloneImage(grayFramePtr);
 
-		cvAbsDiff( framePtr_gray, previousFramePtr_gray, diffFramePtr );
-
-		previousFramePtr_gray = cvCloneImage(framePtr_gray);
-
-		// Iterate through each ROI and collect the intensity over time
+		// Iterate through each ROI and store its intensity
 		for (int row = 0; row < HEIGHT_NUM_ROI; row++ ) {
 			for (int col = 0; col < WIDTH_NUM_ROI; col++ ) {
 				int x = col * roiWidth;
 				int y = row * roiHeight;
-
 				cvSetImageROI( diffFramePtr, cvRect( x, y, roiWidth, roiHeight ) );
-				CvScalar intensity = cvAvg(diffFramePtr);
-				cvResetImageROI(diffFramePtr);
+				CvScalar intensity = cvAvg( diffFramePtr );
+				cvResetImageROI( diffFramePtr );
 				int roiIndex =  HEIGHT_NUM_ROI * row + col;
-				cvSet2D(
-					ROIIntensities,
-					roiIndex,
-					frameCounter,
-					intensity );
+				cvSet2D( roiIntensities, roiIndex, frameCounter, intensity );
 			}
 		}
 	}
 
-	bandPassFilter(ROIIntensities, ROIIntensities, lowHarmIndex, highHarmIndex);
-	CvMat* signalPowers = cvCreateMat( ROIIntensities->rows, 1, CV_32FC1 ); 
-	calcPower( ROIIntensities, signalPowers );
+	bandPassFilter( roiIntensities, roiIntensities, lowHarmIndex, highHarmIndex );
+	CvMat* signalPowers = cvCreateMat( roiIntensities->rows, 1, CV_32FC1 ); 
+	calcPower( roiIntensities, signalPowers );
 
-	// should be a column matrix
-	// get max
+	// Find the roi with the highest power.
+	// TODO: This probably isn't the best classification method
 	int maxPowerRoiIndex = 0;
 	float* ptr = ( float* )( signalPowers->data.ptr );
 	float maxPower = *ptr;
@@ -139,72 +156,60 @@ int main( int argc, char* argv[] ) {
 	const int xRoi = roiWidth * ( maxPowerRoiIndex % WIDTH_NUM_ROI );
 	const int yRoi = roiHeight * ( maxPowerRoiIndex / HEIGHT_NUM_ROI );
 
+	// Reiterate through the video once the initial ROI has been located
 	cvReleaseCapture( &capture );
 	capture = cvCreateFileCapture( fileName );
 	if ( capture == NULL ) return -1;
 
+	// Second iteration to get all values of intensity over time
 	for (int frameCounter = 1; frameCounter < numFrames; frameCounter++ ) {
 		framePtr = cvQueryFrame( capture );
 		if( !framePtr ) break;
-		cvCvtColor( framePtr, framePtr_gray, CV_BGR2GRAY);
+		cvCvtColor( framePtr, grayFramePtr, CV_BGR2GRAY);
+		filter( grayFramePtr );
+		cvAbsDiff( grayFramePtr, previousGrayFramePtr, diffFramePtr );
+		previousGrayFramePtr = cvCloneImage(grayFramePtr);
 
-		filter( framePtr_gray );
-
-		cvAbsDiff( framePtr_gray, previousFramePtr_gray, diffFramePtr );
-
-		previousFramePtr_gray = cvCloneImage(framePtr_gray);
-
+		// Draw the ROI rectange
 		cvRectangle(
 			framePtr,
 			CvPoint( xRoi, yRoi ),
 			CvPoint( xRoi + roiWidth, yRoi + roiHeight ),
-			CvScalar( 255, 255, 255 ) );
-#if 0		
-		const int x 		= 200;
-		const int y 		= 150;
-		const int width 	= 128;
-		const int height 	= 128;
-		cvRectangle(
-			framePtr,
-			CvPoint( x, y ),
-			CvPoint( x + width, y + height ),
-			CvScalar( 255, 255, 255 ) );
-#endif
+			CvScalar( 255, 255, 255 )
+			);
 
-		// Ideally, other CV tasks should be enclosed in this scope for performance.
-		cvSetImageROI( framePtr_gray, cvRect( xRoi, yRoi, roiWidth, roiHeight ) );
+		cvSetImageROI( grayFramePtr, cvRect( xRoi, yRoi, roiWidth, roiHeight ) );
+		
 		// Filter to reduce the noise in average intensity fluctuations.
-		filter( framePtr_gray );
-		CvScalar avgIntensity = cvAvg(framePtr_gray);
-		cvResetImageROI(framePtr_gray);
-		cvSet1D( output, frameCounter, avgIntensity );
+		filter( grayFramePtr );
+		CvScalar avgIntensity = cvAvg(grayFramePtr);
+		cvResetImageROI(grayFramePtr);
 
-#if DEBUG
-		cvShowImage( originalWindow, framePtr );
-		cvShowImage( filteredWindow, framePtr_gray );
-		cvShowImage( differenceWindow, diffFramePtr );
-		char c = cvWaitKey( milliSecondsPerFrame );
-		if( c == 27 ) break;
-#endif	
+		cvSet1D( output, frameCounter, avgIntensity );
+		fprintf(rawOutputFilePtr, "%.2f\n", avgIntensity.val[0] );
+
+		if ( debug ) { 
+			cvShowImage( originalWindow, framePtr );
+			cvShowImage( filteredWindow, grayFramePtr );
+			cvShowImage( differenceWindow, diffFramePtr );
+			char c = cvWaitKey( milliSecondsPerFrame );
+			if( c == 27 ) break;
+		}
 	}
 
 	bandPassFilter(output, output, lowHarmIndex, highHarmIndex);
-
-#if 0				
-	for( int col = 0; col < output->cols; col++ ) {
-		fprintf( filePtr, "%.2f\n", output->data.fl[col] );
-	}
-	printf("Wrote %d points of the bandpass filtered discrete time signal text file\n", output->cols);
-#endif
 
 	cvReleaseCapture( &capture );
 	capture = cvCreateFileCapture( fileName );
 	if ( capture == NULL ) return -1;
 
-	// Count the heart beats which should correspond to local maxima. 
+	// For the third iteration, count the heart beats which should correspond to local maxima. 
 	int heartBeatCount = 0;
 	float trough = output->data.fl[0]; 
 	for( int frame = 1; frame < output->cols - 1; frame++ ) {
+
+		fprintf( filteredOutputFilePtr, "%.2f\n", output->data.fl[frame] );
+
 		if ( output->data.fl[frame] > output->data.fl[frame - 1] && 
 				output->data.fl[frame] > output->data.fl[frame + 1] ) {
 			if ( output->data.fl[frame] - trough > PEAK_TROUGH_THRESH ) {
@@ -217,32 +222,42 @@ int main( int argc, char* argv[] ) {
 			trough = output->data.fl[frame];
 		}
 
-#if DEMO
-		framePtr = cvQueryFrame(capture);
-		if( !framePtr ) break;
-		CvFont font;
-		cvInitFont( &font, CV_FONT_HERSHEY_SIMPLEX, 1.0, 1.0);
-		char str[3];
-		sprintf( str, "%d", heartBeatCount );
-		cvPutText( 	
-			framePtr,
-			str,
-			CvPoint( 100, 100 ),
-			&font,
-			CvScalar( 255, 255, 255 ) );
-		cvShowImage( originalWindow, framePtr );
-		char c = cvWaitKey( milliSecondsPerFrame );
-		if ( c == 27 ) break;
-#endif // End DEMO
+		if ( demo ) { 
+			framePtr = cvQueryFrame(capture);
+			if( !framePtr ) break;
+			CvFont font;
+			cvInitFont( &font, CV_FONT_HERSHEY_SIMPLEX, 1.0, 1.0, 0, 3, 8);
+			char str[3];
+			sprintf( str, "%d", heartBeatCount );
+			cvRectangle(
+				framePtr,
+				CvPoint( xRoi, yRoi ),
+				CvPoint( xRoi + roiWidth, yRoi + roiHeight ),
+				CvScalar( 255, 255, 255 )
+				);
+			cvPutText( 	
+				framePtr,
+				str,
+				CvPoint( 100, 100 ),
+				&font,
+				CvScalar( 255, 255, 255 ) 
+				);
+			//cvWriteFrame( writer, framePtr );
+			cvShowImage( originalWindow, framePtr );
+			char c = cvWaitKey( milliSecondsPerFrame );
+			if ( c == 27 ) break;
+		}
 	}
 
 	printf("heartBeatCount: %d\n", heartBeatCount);
 
 	// Clean up
-	fclose(filePtr);
+	fclose(rawOutputFilePtr);
+	fclose(filteredOutputFilePtr);
 	cvReleaseMat( &output );
-	cvReleaseMat( &ROIIntensities );
+	cvReleaseMat( &roiIntensities );
 	cvReleaseMat( &signalPowers );
+	cvReleaseVideoWriter( &writer );
 	cvReleaseCapture( &capture );
 	cvDestroyWindow( originalWindow );
 	cvDestroyWindow( filteredWindow );
