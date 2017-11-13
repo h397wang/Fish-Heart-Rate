@@ -7,3 +7,5 @@ int test_houghCircles( char * );
 
 
 int test_BlobDetection( char * );
+
+int test_detectHeartRoi( char * );

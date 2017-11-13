@@ -6,6 +6,8 @@
 #include "cv.h"
 #include "highgui.h"
 
+#include "../helper.h"
+
 IplImage* gImage = NULL;
 IplImage* gImageGray = NULL;
 IplImage* gImageTmp = NULL;
@@ -258,4 +260,31 @@ int test_BlobDetection(char* imageToLoadPath) {
 	return 0;
 }
 
+int test_detectHeartRoi( char * fileName){
 
+	const char* windowName = "test_detectHeartRoi";
+
+	CvCapture* capture = cvCreateFileCapture( fileName );
+	if( capture == NULL ){
+		printf( "%s could not be opened\n", fileName );
+		return -1;
+	}
+
+	IplImage* framePtr = cvQueryFrame( capture );
+	IplImage* grayFramePtr = cvCreateImage( cvGetSize( framePtr ), framePtr->depth, 1 );
+
+	cvNamedWindow( windowName, 1 );
+	const int numFrames = cvGetCaptureProperty( capture, CV_CAP_PROP_FRAME_COUNT );
+	for (int frameCounter = 0; frameCounter < numFrames; frameCounter++ ) {
+		framePtr = cvQueryFrame( capture );
+		cvCvtColor( framePtr, grayFramePtr, CV_BGR2GRAY );
+		detectHeartRoi( grayFramePtr );
+		cvShowImage( windowName, grayFramePtr );
+		char c = cvWaitKey( 33 );
+		if( c == 27 ) break;
+	}
+
+	cvReleaseCapture( &capture );
+	cvDestroyWindow( windowName );
+	return 0;
+}

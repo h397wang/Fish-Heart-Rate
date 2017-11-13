@@ -8,27 +8,31 @@
 
 int main( int argc, char* argv[] ) {
 	// default
-	char* imageToLoadPath = "images/fish0.jpg";
+	char* fileToLoadPath = "images/fish0.jpg";
 	if (argc < 2) {
 		printf("Enter number for specified function:\n"
 			"0: test_BlobDetection\n"
 			"1: test_houghCircles\n"
+			"2: test_detectHeartRoi\n"
 			);
 		return -1;
 	}
 	
 	if (argc > 2) {
 		// no deep copy required
-		imageToLoadPath = argv[2];
+		fileToLoadPath = argv[2];
 	}
 
 	int choice = atoi(argv[1]);
 	switch(choice){
 	case 0:
-		test_BlobDetection(imageToLoadPath);
+		test_BlobDetection(fileToLoadPath);
 		break;
 	case 1:
-		test_houghCircles(imageToLoadPath);
+		test_houghCircles(fileToLoadPath);
+		break;
+	case 2:
+		test_detectHeartRoi(fileToLoadPath);
 		break;
 	default:
 		break;

@@ -6,6 +6,26 @@
 
 #IncludeRegexTransform: 
 
+/Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp
+stdio.h
+-
+assert.h
+-
+limits.h
+-
+helper.h
+/Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.h
+cv.h
+/Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/cv.h
+highgui.h
+/Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/highgui.h
+
+/Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.h
+cv.h
+/Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/cv.h
+highgui.h
+/Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/highgui.h
+
 /Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/sandbox/main.cpp
 cv.h
 /Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/sandbox/cv.h
@@ -29,6 +49,8 @@ cv.h
 /Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/sandbox/cv.h
 highgui.h
 /Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/sandbox/highgui.h
+../helper.h
+/Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.h
 
 /Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/sandbox/test.h
 cv.h

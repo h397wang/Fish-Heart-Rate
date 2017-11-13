@@ -123,6 +123,33 @@ test/fast:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
 .PHONY : test/fast
 
+Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.o: Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp.o
+
+.PHONY : Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.o
+
+# target to build an object file
+Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp.o
+.PHONY : Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp.o
+
+Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.i: Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp.i
+
+.PHONY : Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.i
+
+# target to preprocess a source file
+Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp.i
+.PHONY : Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp.i
+
+Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.s: Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp.s
+
+.PHONY : Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.s
+
+# target to generate assembly for a file
+Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp.s
+.PHONY : Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.cpp.s
+
 main.o: main.cpp.o
 
 .PHONY : main.o
@@ -186,6 +213,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... test"
+	@echo "... Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.o"
+	@echo "... Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.i"
+	@echo "... Users/henrywang/Documents/SideProjects/ComputerVisionProj/Fish/helper.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
