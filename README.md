@@ -41,6 +41,6 @@ This signal processing looks like this.
 From visual inspection, it becomes very obvious where the heart beats appear. We can confirm this assumption too. We know the video's FPS, and therefore the frame period (33 ms). A period on the graph appears to take 10 frames which implies that the heart beat period is about 330 ms. So a frequency range of 2.5 to 3.5 Hz should be appropriate.  
 
 ### Demonstration
-Here's an overly lengthy gif of the end product.
+Here's an overly lengthy gif of the end product (it might take awhile to load).
 
 <a href="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_demo_10sec.gif"><img src="https://github.com/h397wang/Fish-Heart-Rate/blob/master/DemoVids/fish_heart_rate_demo_10sec.gif" align="center" ></a>
